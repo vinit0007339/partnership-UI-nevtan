@@ -81,6 +81,10 @@ docker build --build-arg APP_ENV=stage \
 The image runs Next's standalone server (`node server.js`) on port 3000 as a non-root user.
 Because of `output: "standalone"`, `npm start` prints a warning locally. It still works.
 
+`npm start` listens on `$PORT`, or Next's default `3000`, which is what Docker images and hosting
+platforms expect. To try a production build locally on `3010` (the port the local API allows), use
+`npm run preview`.
+
 ### Amplify
 
 `amplify.yml` builds `prod` for the `main`/`prod`/`production` branches and `stage` for everything

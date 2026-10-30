@@ -4,7 +4,7 @@
   "type": "module",
   "description": "NevTan Partner Program site",
   "scripts": {
-    "start": "node scripts/next-with-env.mjs localhost start -p 3010",
+    "start": "node scripts/next-with-env.mjs localhost start",
     "dev": "node scripts/next-with-env.mjs localhost dev -p 3010",
     "dev:localhost": "node scripts/next-with-env.mjs localhost dev -p 3010",
     "dev:stage": "node scripts/next-with-env.mjs stage dev -p 3010",
