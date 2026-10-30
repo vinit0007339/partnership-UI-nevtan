@@ -1,0 +1,41 @@
+{
+  "name": "nevtan-partner-ui",
+    "private": true,
+  "type": "module",
+  "description": "NevTan Partner Program site",
+  "scripts": {
+    "start": "node scripts/next-with-env.mjs localhost start -p 3010",
+    "dev": "node scripts/next-with-env.mjs localhost dev -p 3010",
+    "dev:localhost": "node scripts/next-with-env.mjs localhost dev -p 3010",
+    "dev:stage": "node scripts/next-with-env.mjs stage dev -p 3010",
+    "build": "node scripts/next-with-env.mjs stage build",
+    "build:localhost": "node scripts/next-with-env.mjs localhost build",
+    "build:stage": "node scripts/next-with-env.mjs stage build",
+    "build:prod": "node scripts/next-with-env.mjs prod build",
+    "preview": "node scripts/next-with-env.mjs localhost start -p 3010"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^5.18.0",
+    "@mui/material": "^5.18.0",
+    "axios": "^1.12.2",
+    "next": "^15.5.19",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

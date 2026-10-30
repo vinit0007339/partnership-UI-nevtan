@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+*.log
+Dockerfile
+.dockerignore
+# Local-only env files. Deliberately does NOT cover .env.localhost / .env.stage / .env.prod:
+# the build reads them to compile NEXT_PUBLIC_* into the bundle.
+.env.local
+.env.*.local
