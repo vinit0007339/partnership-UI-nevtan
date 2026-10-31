@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { CheckCircleRounded as CheckIcon } from "@mui/icons-material";
 import Layout from "../component/Layout";
+import SignInLockNotice from "../component/SignInLockNotice";
 import { apiMessage } from "../Utility/axiosInstances";
 import { getToken, getUser, homeOf, rememberSsoToken, safeNext, setSession, useAuth } from "../Utility/auth";
 import {
@@ -32,6 +33,8 @@ import {
   ssoSignIn,
   ssoSignUp,
 } from "../Utility/sso";
+import { formatCountdown, lockAppliesTo, lockMillisLeft, readSignInLock } from "../Utility/signInLock";
+import useClock from "../Utility/useClock";
 import { tokens } from "../theme";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,13 +62,13 @@ const InlineButton = ({ children, onClick, disabled }) => (
   </MuiLink>
 );
 
-const SubmitButton = ({ busy, children, fullWidth = true }) => (
+const SubmitButton = ({ busy, disabled, children, fullWidth = true }) => (
   <Button
     type="submit"
     variant="contained"
     size="large"
     fullWidth={fullWidth}
-    disabled={busy}
+    disabled={busy || disabled}
     startIcon={busy ? <CircularProgress size={18} color="inherit" /> : null}
     sx={{ py: 1.25, fontWeight: 800 }}
   >
@@ -92,6 +95,10 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState(null);
+  const [signInLock, setSignInLock] = useState(null);
+
+  const lockClock = useClock(signInLock?.unlockAt);
+  const lockedMillis = lockAppliesTo(signInLock, email) ? lockMillisLeft(signInLock, lockClock) : 0;
 
   const go = (target) => {
     setErrors({});
@@ -163,9 +170,12 @@ const Login = () => {
     setErrors({});
     try {
       const ssoToken = await ssoSignIn(config, email.trim(), password);
+      setSignInLock(null);
       await finish(ssoToken);
     } catch (error) {
-      setErrors({ form: apiMessage(error), verify: needsVerification(error) });
+      const lock = readSignInLock(error, email);
+      if (lock) setSignInLock(lock);
+      else setErrors({ form: apiMessage(error), verify: needsVerification(error) });
       setBusy(false);
     }
   };
@@ -302,7 +312,10 @@ const Login = () => {
             {passwordToggle}
             <InlineButton onClick={() => go("forgot")}>Forgot password?</InlineButton>
           </Stack>
-          <SubmitButton busy={busy}>Sign in</SubmitButton>
+          {lockedMillis > 0 && <SignInLockNotice lock={signInLock} millisLeft={lockedMillis} onResetPassword={() => go("forgot")} />}
+          <SubmitButton busy={busy} disabled={lockedMillis > 0}>
+            {lockedMillis > 0 ? `Try again in ${formatCountdown(lockedMillis)}` : "Sign in"}
+          </SubmitButton>
           <Typography sx={{ fontSize: 14, color: tokens.muted, textAlign: "center" }}>
             No NevTan account yet? <InlineButton onClick={() => go("signup")}>Create a NevTan account</InlineButton>
           </Typography>
