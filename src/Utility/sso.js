@@ -12,10 +12,12 @@ const SIGNED_OUT_KEY = "partner.signedOut";
 const CHECK_TIMEOUT_MS = 4000;
 let configPromise = null;
 
-function ssoError(message, status) {
+function ssoError(message, status, body) {
   const error = new Error(message);
   error.userMessage = message;
   error.status = status;
+  error.retryAfterSeconds = body && body.retryAfterSeconds;
+  error.canResetPassword = body && body.canResetPassword;
   return error;
 }
 
@@ -60,7 +62,7 @@ async function ssoPost(config, path, body, headers = {}) {
     data = null;
   }
   if (!res.ok || (data && (data.success === false || data.status === "FAILED"))) {
-    throw ssoError(messageOf(data, `Something went wrong (${res.status}). Please try again.`), res.status);
+    throw ssoError(messageOf(data, `Something went wrong (${res.status}). Please try again.`), res.status, data);
   }
   return data;
 }
